@@ -6,7 +6,7 @@ const testTitle = (inKey: number, inText: string) => {
   return `Test Case: 00${(inKey + 1).toString()}: ${inText}`;
 };
 
-testDemo.describe("Test Suite", () => {
+testDemo.describe("Test Suite 1", () => {
   testDemo.beforeEach(async ({ dashboardPage }) => {
     await dashboardPage.logoutButton.isVisible();
     await expect(dashboardPage.logoutButton).toBeVisible({ timeout: 10000 });
@@ -48,6 +48,19 @@ testDemo.describe("Test Suite", () => {
 testDemo.describe(
   `Test Suite 2: Using separate data sets for mobile and web`,
   () => {
+    testDemo.beforeEach(async ({ dashboardPage }) => {
+      await dashboardPage.logoutButton.isVisible();
+      await expect(dashboardPage.logoutButton).toBeVisible({ timeout: 10000 });
+    });
+
+    testDemo.afterEach(async ({ page, loginPage, dashboardPage }) => {
+      // Close after each test.
+      await dashboardPage.logoutButton.click();
+      await loginPage.getLoginPageTitle();
+      await expect(loginPage.pageTitle).toBeVisible();
+      await page.close();
+    });
+
     for (const [key, value] of Object.entries(testDataWeb())) {
       testDemo(
         testTitle(+key, `Verify Correct Columns ${value.navigate}`),
@@ -73,7 +86,7 @@ testDemo.describe(
       );
 
       testDemo(
-        `${+key}, Verify Correct Columns Web ${value.verify}`,
+        testTitle(+key, `Verify Correct Columns Web ${value.verify}`),
         async ({ dashboardPage, page }) => {
           const hasChildTodo = await hasChildTile(
             dashboardPage.todoColumn,
@@ -95,7 +108,7 @@ testDemo.describe(
       );
 
       testDemo(
-        `${+key}, Verify Tags Web ${value.navigate}`,
+        testTitle(+key, `Verify Tags Web ${value.navigate}`),
         async ({ dashboardPage, page }) => {
           for (let tag of value.tags) {
             const hasTagTodo = await hasChildTag(
@@ -120,7 +133,7 @@ testDemo.describe(
     }
     for (const [key, value] of Object.entries(testDataMobile())) {
       testDemo(
-        `${+key}, Verify Correct Columns Mobile ${value.navigate}`,
+        testTitle(+key, `Verify Correct Columns Mobile ${value.navigate}`),
         async ({ dashboardPageM, page }) => {
           await dashboardPageM.mobileAppButton.click();
           await expect(dashboardPageM.todoColumn).toBeVisible();
@@ -143,6 +156,15 @@ testDemo.describe(
 
           if (hasChildInProgress) expect(hasChildInProgress).toBeTruthy();
 
+          const hasChildReview = await hasChildTile(
+            dashboardPageM.doneColumn,
+            page,
+            "h3",
+            value.verify
+          );
+
+          if (hasChildReview) expect(hasChildReview).toBeTruthy();
+
           const hasChildDone = await hasChildTile(
             dashboardPageM.doneColumn,
             page,
@@ -155,7 +177,7 @@ testDemo.describe(
       );
 
       testDemo(
-        `${+key}, Verify Tags Mobile ${value.navigate}`,
+        testTitle(+key, `Verify Tags Mobile ${value.navigate}`),
         async ({ dashboardPageM, page }) => {
           for (let tag of value.tags) {
             const hasTagTodo = await hasChildTag(

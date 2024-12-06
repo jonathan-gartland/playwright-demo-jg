@@ -1,7 +1,7 @@
 import { LaunchOptions, Logger, test as base } from "@playwright/test";
 import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashBoardPage";
-import { text } from "node:stream/consumers";
+// import { text } from "node:stream/consumers";
 
 interface TestFixtures {
   loginPage: LoginPage;
@@ -14,6 +14,7 @@ export const testDemo = base.extend<
   TestFixtures,
   { launchOptions: LaunchOptions }
 >({
+  // @ts-ignore
   launchOptions: async ({}, use) => {
     const logger: Logger = {
       isEnabled: (name: string, severity: LogSeverity) => name === "api",
