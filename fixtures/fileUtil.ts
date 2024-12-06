@@ -1,4 +1,4 @@
-import testDataFromFile from "./qa/animated.gingersnap.json";
+import testDataFromFile from "../data/qa/animated.gingersnap.json";
 
 export const testData = () => {
   return testDataFromFile;

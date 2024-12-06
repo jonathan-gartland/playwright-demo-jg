@@ -1,8 +1,9 @@
 import { testDemo, expect } from "@/fixtures/testFixture";
-import { testData, testDataMobile, testDataWeb } from "@/data/fileUtil";
+import { testData, testDataMobile, testDataWeb } from "@/fixtures/fileUtil";
+import { hasChildTile, hasChildTag } from "@/fixtures/HasChild";
 
-const title = (inKey: number, inText: string) => {
-  return `Test Case: 00${inKey.toString()}: ${inText}`;
+const testTitle = (inKey: number, inText: string) => {
+  return `Test Case: 00${(inKey + 1).toString()}: ${inText}`;
 };
 
 testDemo.describe("Test Suite", () => {
@@ -21,7 +22,7 @@ testDemo.describe("Test Suite", () => {
 
   for (const [key, value] of Object.entries(testData())) {
     testDemo(
-      title(+key + 1, "Log In Success: Mobile and Web"),
+      testTitle(+key, "Log In Success: Mobile and Web"),
       async ({ dashboardPage }) => {
         await expect(dashboardPage.logoutButton).toBeVisible({
           timeout: 10000,
@@ -31,7 +32,7 @@ testDemo.describe("Test Suite", () => {
     );
 
     testDemo(
-      title(+key + 1, "Correct View: Mobile and Web"),
+      testTitle(+key, "Correct View: Mobile and Web"),
       async ({ dashboardPage }) => {
         if (value.navigate.includes("web")) {
           await expect(dashboardPage.pageTitleWeb).toBeVisible();
@@ -49,7 +50,7 @@ testDemo.describe(
   () => {
     for (const [key, value] of Object.entries(testDataWeb())) {
       testDemo(
-        title(+key + 1, `Verify Correct Columns ${value.navigate}`),
+        testTitle(+key, `Verify Correct Columns ${value.navigate}`),
         async ({ dashboardPage, page }) => {
           if (value.navigate.includes("web")) {
             await expect(dashboardPage.pageTitleWeb).toBeVisible();
@@ -58,6 +59,8 @@ testDemo.describe(
             await expect(dashboardPage.doneColumn).toBeVisible();
           }
 
+          // the view uses same framework for mobile and web
+          // just do check here instead of separate test case
           if (value.navigate === "mobile") {
             await expect(dashboardPage.pageTitleWeb).toBeVisible();
             await dashboardPage.mobileAppButton.click();
@@ -70,44 +73,46 @@ testDemo.describe(
       );
 
       testDemo(
-        `${+key + 1}, Verify Correct Columns Web ${value.verify}`,
+        `${+key}, Verify Correct Columns Web ${value.verify}`,
         async ({ dashboardPage, page }) => {
-          const hasChildTodo =
-            (await dashboardPage.todoColumn
-              .filter({
-                has: page.locator(`h3:text("${value.verify}")`),
-              })
-              .count()) > 0;
+          const hasChildTodo = await hasChildTile(
+            dashboardPage.todoColumn,
+            page,
+            "h3",
+            value.verify
+          );
+
           if (hasChildTodo) expect(hasChildTodo).toBeTruthy();
 
-          const hasChildInProgress =
-            (await dashboardPage.inProgressColumn
-              .filter({
-                has: page.locator(`h3:text("${value.verify}")`),
-              })
-              .count()) > 0;
+          const hasChildInProgress = await hasChildTile(
+            dashboardPage.todoColumn,
+            page,
+            "h3",
+            value.verify
+          );
           if (hasChildInProgress) expect(hasChildInProgress).toBeTruthy();
         }
       );
 
       testDemo(
-        `${+key + 1}, Verify Tags Web ${value.navigate}`,
+        `${+key}, Verify Tags Web ${value.navigate}`,
         async ({ dashboardPage, page }) => {
           for (let tag of value.tags) {
-            const hasTagTodo =
-              (await dashboardPage.todoColumn
-                .filter({
-                  has: page.locator(`span:text("${tag}")`),
-                })
-                .count()) > 0;
+            const hasTagTodo = await hasChildTag(
+              dashboardPage.todoColumn,
+              page,
+              "span",
+              tag
+            );
+
             if (hasTagTodo) expect(hasTagTodo).toBeTruthy();
 
-            const hasTagInProgress =
-              (await dashboardPage.inProgressColumn
-                .filter({
-                  has: page.locator(`span:text("${tag}")`),
-                })
-                .count()) > 0;
+            const hasTagInProgress = await hasChildTag(
+              dashboardPage.todoColumn,
+              page,
+              "span",
+              tag
+            );
             if (hasTagInProgress) expect(hasTagInProgress).toBeTruthy();
           }
         }
@@ -115,65 +120,66 @@ testDemo.describe(
     }
     for (const [key, value] of Object.entries(testDataMobile())) {
       testDemo(
-        `${+key + 1}, Verify Correct Columns Mobile ${value.navigate}`,
+        `${+key}, Verify Correct Columns Mobile ${value.navigate}`,
         async ({ dashboardPageM, page }) => {
           await dashboardPageM.mobileAppButton.click();
           await expect(dashboardPageM.todoColumn).toBeVisible();
 
-          const hasChildTodo =
-            (await dashboardPageM.todoColumn
-              .filter({
-                has: page.locator(`h3:text("${value.verify}")`),
-              })
-              .count()) > 0;
+          const hasChildTodo = hasChildTile(
+            dashboardPageM.todoColumn,
+            page,
+            "h3",
+            value.verify
+          );
+
           if (hasChildTodo) expect(hasChildTodo).toBeTruthy();
 
-          const hasChildInProgress =
-            (await dashboardPageM.inProgressColumn
-              .filter({
-                has: page.locator(`h3:text("${value.verify}")`),
-              })
-              .count()) > 0;
+          const hasChildInProgress = hasChildTile(
+            dashboardPageM.todoColumn,
+            page,
+            "h3",
+            value.verify
+          );
 
           if (hasChildInProgress) expect(hasChildInProgress).toBeTruthy();
 
-          const hasChildDone =
-            (await dashboardPageM.doneColumn
-              .filter({
-                has: page.locator(`h3:text("${value.verify}")`),
-              })
-              .count()) > 0;
+          const hasChildDone = await hasChildTile(
+            dashboardPageM.doneColumn,
+            page,
+            "h3",
+            value.verify
+          );
 
           if (hasChildDone) expect(hasChildDone).toBeTruthy();
         }
       );
 
       testDemo(
-        `${+key + 1}, Verify Tags Mobile ${value.navigate}`,
+        `${+key}, Verify Tags Mobile ${value.navigate}`,
         async ({ dashboardPageM, page }) => {
           for (let tag of value.tags) {
-            const hasTagTodo =
-              (await dashboardPageM.todoColumn
-                .filter({
-                  has: page.locator(`span:text("${tag}")`),
-                })
-                .count()) > 0;
+            const hasTagTodo = await hasChildTag(
+              dashboardPageM.doneColumn,
+              page,
+              tag,
+              "span"
+            );
             if (hasTagTodo) expect(hasTagTodo).toBeTruthy();
 
-            const hasTagInProgress =
-              (await dashboardPageM.inProgressColumn
-                .filter({
-                  has: page.locator(`span:text("${tag}")`),
-                })
-                .count()) > 0;
+            const hasTagInProgress = await hasChildTag(
+              dashboardPageM.doneColumn,
+              page,
+              tag,
+              "span"
+            );
             if (hasTagInProgress) expect(hasTagInProgress).toBeTruthy();
 
-            const hasTagDone =
-              (await dashboardPageM.doneColumn
-                .filter({
-                  has: page.locator(`span:text("${tag}")`),
-                })
-                .count()) > 0;
+            const hasTagDone = await hasChildTag(
+              dashboardPageM.doneColumn,
+              page,
+              tag,
+              "span"
+            );
             if (hasTagDone) expect(hasTagDone).toBeTruthy();
           }
         }

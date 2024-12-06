@@ -1,14 +1,17 @@
 import { test as base } from "@playwright/test";
 import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashBoardPage";
+import { text } from "node:stream/consumers";
 
 interface TestFixtures {
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
   dashboardPageM: DashboardPage;
+  hasChild: boolean;
 }
 
 export const testDemo = base.extend<TestFixtures>({
+  ignoreHTTPSErrors: undefined,
   loginPage: async ({ page }, use) => {
     const loginPage: LoginPage = new LoginPage(page);
     const userData = {
