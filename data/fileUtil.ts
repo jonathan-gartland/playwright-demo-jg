@@ -12,7 +12,6 @@ export const testDataWeb = () => {
       webTest.push({ ...value });
     }
   }
-
   return webTest;
 };
 
@@ -24,6 +23,5 @@ export const testDataMobile = () => {
       mobileTest.push({ ...value });
     }
   }
-
   return mobileTest;
 };

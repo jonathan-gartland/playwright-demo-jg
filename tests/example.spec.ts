@@ -1,5 +1,5 @@
-import { testDemo, expect } from "../fixtures/testFixture";
-import { testData, testDataMobile, testDataWeb } from "../data/fileUtil";
+import { testDemo, expect } from "@/fixtures/testFixture";
+import { testData, testDataMobile, testDataWeb } from "@/data/fileUtil";
 
 const title = (inKey: number, inText: string) => {
   return `Test Case: 00${inKey.toString()}: ${inText}`;

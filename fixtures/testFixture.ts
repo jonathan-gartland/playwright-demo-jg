@@ -1,17 +1,11 @@
 import { test as base } from "@playwright/test";
-import { LoginPage } from "../pages/LoginPage";
-import { DashboardPage } from "../pages/DashBoardPage";
-import testDataFromFile from "../data/qa/animated.gingersnap.json";
-
-import { testData, testDataMobile, testDataWeb } from "../data/fileUtil";
+import { LoginPage } from "@/pages/LoginPage";
+import { DashboardPage } from "@/pages/DashBoardPage";
 
 interface TestFixtures {
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
   dashboardPageM: DashboardPage;
-  // testData: {};
-  // testDataWeb: {};
-  // testDataMobile: {};
 }
 
 export const testDemo = base.extend<TestFixtures>({
@@ -42,14 +36,5 @@ export const testDemo = base.extend<TestFixtures>({
     await dashboardPageM.mobileAppButton.click();
     await use(dashboardPageM);
   },
-  // testData: async ({}, use) => {
-  //   await use(testData());
-  // },
-  // testDataWeb: async ({}, use) => {
-  //   await use(testDataWeb());
-  // },
-  // testDataMobile: async ({}, use) => {
-  //   await use(testDataMobile());
-  // },
 });
 export { expect } from "@playwright/test";
