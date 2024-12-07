@@ -13,9 +13,6 @@ export class DashboardPage {
     // I've worked with React and would happily assist in adding necessary target test ids
     // to the app
     // that said this works for what I need tto get the task done
-    // return this.page.locator(
-    //   "//div[contains(@class, 'w-80')][.//span[contains(@class, 'bg-red-100')]]"
-    // ); // todo column
     return this.page.locator('//*[@id="root"]/div/div[2]/main/div/div/div[1]');
   }
 
