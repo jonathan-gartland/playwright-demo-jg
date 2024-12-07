@@ -38,6 +38,12 @@
     "prettier": "^3.4.1",
     "typescript-eslint": "^8.17.0"
   },
+  "lint-staged": {
+    "*.ts": ["eslint --fix", "prettier --write"],
+    "*.js": ["eslint --fix", "prettier --write"],
+    "*.json": ["prettier --write"],
+    "*.md": ["prettier --write"]
+  },
   "dependencies": {
     "dotenv": "^16.4.7"
   }

@@ -25,6 +25,18 @@ export class DashboardPage {
   get doneColumn() {
     return this.page.locator('//*[@id="root"]/div/div[2]/main/div/div/div[4]'); // done column
   }
+
+  async getColumnChildTile(locator: Locator, tag: string, text: string) {
+    return locator.locator(`${tag}:text("${text}")`);
+  }
+  async getColumnChildTag(locator: Locator, element: string, tag: string) {
+    return locator.locator(`${element}:text("${tag}")`);
+  }
+
+  async getColumnChildTags(locator: Locator, tag: string) {
+    return locator.locator(`span:text("${tag}")`);
+  }
+
   get reviewColumn() {
     return this.page.locator('//*[@id="root"]/div/div[2]/main/div/div/div[3]'); // done column
   }

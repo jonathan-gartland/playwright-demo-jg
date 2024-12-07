@@ -1,31 +1,22 @@
 import { Locator, Page } from "@playwright/test";
+import { DashboardPage } from "@/pages/DashBoardPage";
 
 export async function hasChildTag(
+  dashboardPage: DashboardPage,
   parent: Locator,
-  page: Page,
-  tag: string,
-  element: string
+  element: string,
+  tag: string
 ): Promise<boolean> {
-  return (
-    (await parent
-      .filter({
-        has: page.locator(`${element}:text("${tag}")`),
-      })
-      .count()) > 0
-  );
+  const childTag = await dashboardPage.getColumnChildTag(parent, element, tag);
+  return (await childTag.count()) > 0;
 }
 
 export async function hasChildTile(
+  dashboardPage: DashboardPage,
   parent: Locator,
-  page: Page,
   tag: string,
   text: string
 ): Promise<boolean> {
-  return (
-    (await parent
-      .filter({
-        has: page.locator(`${tag}:text("${text}")`),
-      })
-      .count()) > 0
-  );
+  const childTile = await dashboardPage.getColumnChildTile(parent, tag, text);
+  return (await childTile.count()) > 0;
 }

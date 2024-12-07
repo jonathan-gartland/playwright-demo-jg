@@ -1,20 +1,26 @@
-import { LaunchOptions, Logger, test as base } from "@playwright/test";
+import {
+  LaunchOptions,
+  Logger,
+  Page,
+  ConsoleMessage,
+  Request,
+  test as base,
+} from "@playwright/test";
 import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashBoardPage";
-// import { text } from "node:stream/consumers";
 
 interface TestFixtures {
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
   dashboardPageM: DashboardPage;
-  hasChild: boolean;
 }
+
+type LogSeverity = "info" | "warning" | "error";
 
 export const testDemo = base.extend<
   TestFixtures,
   { launchOptions: LaunchOptions }
 >({
-  // @ts-ignore
   launchOptions: async ({}, use) => {
     const logger: Logger = {
       isEnabled: (name: string, severity: LogSeverity) => name === "api",
@@ -34,10 +40,10 @@ export const testDemo = base.extend<
       const listenerPageLoad = (page: Page, label: string) => {
         console.log(`${getDate()} ${label}: ${page.url()}`);
       };
-      page.on("domcontentloaded", (page) =>
+      page.on("domcontentloaded", (page: Page) =>
         listenerPageLoad(page, "Event DOMContentLoad")
       );
-      page.on("load", (page) => listenerPageLoad(page, "Event Load"));
+      page.on("load", (page: Page) => listenerPageLoad(page, "Event Load"));
       page.on("console", (message: ConsoleMessage) =>
         console.log(`${getDate()} Event Console: ${message.text()}`)
       );
@@ -50,11 +56,13 @@ export const testDemo = base.extend<
           `${getDate()} ${label}: ${request.url()} ${request.resourceType()}`
         );
       };
-      page.on("request", (request) => listenerRequest(request, "Request"));
-      page.on("requestfinished", (request) =>
+      page.on("request", (request: Request) =>
+        listenerRequest(request, "Request")
+      );
+      page.on("requestfinished", (request: Request) =>
         listenerRequest(request, "Request Finished")
       );
-      page.on("requestfailed", (request) =>
+      page.on("requestfailed", (request: Request) =>
         listenerRequest(request, "## REQUEST FAILED ##")
       );
 
@@ -92,4 +100,5 @@ export const testDemo = base.extend<
     await use(dashboardPageM);
   },
 });
+
 export { expect } from "@playwright/test";
